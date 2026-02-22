@@ -77,8 +77,8 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Role management (admin/user)
 
 ### Dashboard / Overview
-- [ ] Main dashboard page
-- [ ] Display summary widgets
+- [x] Main dashboard page
+- [x] Display summary widgets
 - [ ] Recent activity feed
 - [ ] Charts and graphs (extra)
 - [ ] Dynamic real-time updates

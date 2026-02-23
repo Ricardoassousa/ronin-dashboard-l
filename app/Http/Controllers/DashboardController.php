@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,10 +24,19 @@ class DashboardController extends Controller
         try {
             $stats = [
                 'users' => User::count(),
+                'activities' => Activity::count()
             ];
+            $recentActivities = Activity::with('user')->latest()->take(10)->get();
+
+            $ordersPerDay = Activity::where('type', 'order')
+                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
+                ->where('created_at', '>=', now()->subDays(7))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->pluck('total', 'date');
 
             Log::info('Dashboard loaded successfully for user ID: ' . auth()->id());
-            return view('dashboard', compact('stats'));
+            return view('dashboard', compact('stats', 'recentActivities', 'ordersPerDay'));
 
         } catch (Exception $e) {
             Log::error('DashboardController@index error: ' . $e->getMessage());

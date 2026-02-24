@@ -21,27 +21,7 @@ class DashboardController extends Controller
      */
     public function index(): View
     {
-        try {
-            $stats = [
-                'users' => User::count(),
-                'activities' => Activity::count()
-            ];
-            $recentActivities = Activity::with('user')->latest()->take(10)->get();
-
-            $ordersPerDay = Activity::where('type', 'order')
-                ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-                ->where('created_at', '>=', now()->subDays(7))
-                ->groupBy('date')
-                ->orderBy('date')
-                ->pluck('total', 'date');
-
-            Log::info('Dashboard loaded successfully for user ID: ' . auth()->id());
-            return view('dashboard', compact('stats', 'recentActivities', 'ordersPerDay'));
-
-        } catch (Exception $e) {
-            Log::error('DashboardController@index error: ' . $e->getMessage());
-            return view('dashboard')->withErrors('Unable to load dashboard statistics at this time.');
-        }
+        return view('dashboard');
     }
 
 }

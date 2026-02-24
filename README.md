@@ -81,7 +81,7 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Display summary widgets
 - [x] Recent activity feed
 - [x] Charts and graphs (extra)
-- [ ] Dynamic real-time updates
+- [x] Dynamic real-time updates
 
 ### Entity Management (CRUD)
 - [ ] Create records

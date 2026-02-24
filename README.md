@@ -70,18 +70,18 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 The Laravel 9 Dashboard project implements the following core features:
 
 ### User Management
-- [ ] Create account
-- [ ] Login
-- [ ] Logout
-- [ ] Edit profile
-- [ ] Role management (admin/user)
+- [x] Create account
+- [x] Login
+- [x] Logout
+- [x] Edit profile
+- [x] Role management (admin/user)
 
 ### Dashboard / Overview
-- [ ] Main dashboard page
-- [ ] Display summary widgets
-- [ ] Recent activity feed
-- [ ] Charts and graphs (extra)
-- [ ] Dynamic real-time updates
+- [x] Main dashboard page
+- [x] Display summary widgets
+- [x] Recent activity feed
+- [x] Charts and graphs (extra)
+- [x] Dynamic real-time updates
 
 ### Entity Management (CRUD)
 - [ ] Create records

@@ -84,12 +84,12 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Dynamic real-time updates
 
 ### Entity Management (CRUD)
-- [ ] Create records
-- [ ] Edit records
-- [ ] Delete records
-- [ ] View record details
-- [ ] Pagination of lists
-- [ ] Search/filter records
+- [x] Create records
+- [x] Edit records
+- [x] Delete records
+- [x] View record details
+- [x] Pagination of lists
+- [x] Search/filter records
 - [ ] Bulk actions (extra)
 
 ### File Management

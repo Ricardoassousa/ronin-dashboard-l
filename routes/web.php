@@ -28,33 +28,53 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+/*
+|--------------------------------------------------------------------------
+|Authenticated User Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
+/*
+|--------------------------------------------------------------------------
+|Admin Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])
-        ->name('dashboard');
+
+    // Dashboard
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    // Products
     Route::resource('products', ProductController::class);
+
+    // Categories
     Route::resource('categories', CategoryController::class);
-    Route::get('customers', [CustomerController::class, 'index'])
-        ->name('customers.index');
-    Route::get('customers/{customer}', [CustomerController::class, 'show'])
-        ->name('customers.show');
-    Route::get('customers/{customer}/edit', [CustomerController::class, 'edit'])
-        ->name('customers.edit');
-    Route::put('customers/{customer}', [CustomerController::class, 'update'])
-        ->name('customers.update');
-    Route::patch('customers/{customer}/block', [CustomerController::class, 'toggleBlock'])
-        ->name('customers.block');
-    Route::get('orders', [OrderController::class, 'index'])
-        ->name('orders.index');
-    Route::get('orders/{order}', [OrderController::class, 'show'])
-        ->name('orders.show');
-    Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])
-        ->name('orders.status');
+
+    // Customers
+    Route::prefix('customers')->name('customers.')->group(function () {
+        Route::get('/', [CustomerController::class, 'index'])->name('index');
+        Route::get('/{customer}', [CustomerController::class, 'show'])->name('show');
+        Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [CustomerController::class, 'update'])->name('update');
+        Route::patch('/{customer}/block', [CustomerController::class, 'toggleBlock'])->name('block');
+        Route::post('/bulk', [CustomerController::class, 'bulk'])->name('bulk');
+    });
+
+    // Orders
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::patch('/{order}/status', [OrderController::class, 'updateStatus'])->name('status');
+    });
+
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

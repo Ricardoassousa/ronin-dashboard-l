@@ -18,7 +18,7 @@
 
         <div>
             <h2 class="font-medium text-gray-700">Price:</h2>
-            <p class="text-gray-900">{{ $product->price }}€</p>
+            <p class="text-gray-900">${{ $product->price }}</p>
         </div>
 
         <div>

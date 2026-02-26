@@ -8,6 +8,37 @@
         <h1 class="text-2xl font-bold">Orders</h1>
     </div>
 
+    <!-- Filter Form -->
+    <form method="GET" class="mb-4 flex flex-wrap gap-2">
+
+        <!-- Search by Customer -->
+        <input type="text"
+            name="customer"
+            placeholder="Search by customer name..."
+            value="{{ request('customer') }}"
+            class="border p-2 rounded flex-1">
+
+            <!-- Filter by Status -->
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
+                <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            </select>
+
+            <button class="bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded-lg shadow transition">
+                Filter
+            </button>
+
+            <!-- Clear filters -->
+            <a href="{{ route('admin.orders.index') }}"
+                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded-lg shadow transition">
+                Reset
+            </a>
+
+    </form>
+
     <!-- Orders Table -->
     <div class="overflow-x-auto bg-white shadow rounded">
         <table class="w-full">
@@ -29,11 +60,11 @@
                     </td>
 
                     <td class="p-3">
-                        {{ $order->customer->name ?? 'N/A' }}
+                        {{ $order->customer->first_name ?? 'N/A' }}
                     </td>
 
                     <td class="p-3">
-                        €{{ number_format($order->total, 2) }}
+                        ${{ number_format($order->total_amount, 2) }}
                     </td>
 
                     <td class="p-3">

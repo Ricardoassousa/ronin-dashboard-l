@@ -36,7 +36,7 @@
                 @forelse($products as $product)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="p-2">{{ $product->name }}</td>
-                    <td class="p-2">{{ $product->price }}€</td>
+                    <td class="p-2">${{ $product->price }}</td>
                     <td class="p-2">{{ $product->stock }}</td>
                     <td class="p-2 space-x-2">
                         <a href="{{ route('admin.products.show', $product) }}" class="text-blue-600 hover:underline">View</a>

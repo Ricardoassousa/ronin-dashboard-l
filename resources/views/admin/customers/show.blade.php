@@ -20,7 +20,7 @@
 
         <div class="flex justify-between items-start">
             <div>
-                <p class="text-lg font-semibold">{{ $customer->name }}</p>
+                <p class="text-lg font-semibold">{{ $customer->first_name }}</p>
                 <p class="text-gray-600 mt-1">{{ $customer->email }}</p>
                 <p class="text-gray-500 mt-2">
                     Registered at: {{ $customer->created_at->format('Y-m-d H:i') }}
@@ -74,7 +74,7 @@
                     @forelse($customer->orders as $order)
                     <tr class="border-t hover:bg-gray-50">
                         <td class="p-3">{{ $order->id }}</td>
-                        <td class="p-3">€{{ number_format($order->total, 2) }}</td>
+                        <td class="p-3">${{ number_format($order->total_amount, 2) }}</td>
 
                         <td class="p-3">
                             @switch($order->status)

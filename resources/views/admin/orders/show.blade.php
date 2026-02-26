@@ -48,7 +48,7 @@
             </p>
 
             <p class="mt-2">
-                <strong>Total:</strong> €{{ number_format($order->total, 2) }}
+                <strong>Total:</strong> €{{ number_format($order->total_amount, 2) }}
             </p>
 
             <p class="mt-2">
@@ -60,7 +60,7 @@
         <div class="bg-white shadow rounded p-6">
             <h2 class="text-lg font-semibold mb-4">Customer</h2>
 
-            <p><strong>Name:</strong> {{ $order->customer->name ?? 'N/A' }}</p>
+            <p><strong>Name:</strong> {{ $order->customer->first_name ?? 'N/A' }}</p>
             <p class="mt-2"><strong>Email:</strong> {{ $order->customer->email ?? 'N/A' }}</p>
         </div>
 
@@ -110,13 +110,13 @@
                             {{ $item->product->name ?? 'Product removed' }}
                         </td>
                         <td class="p-3">
-                            €{{ number_format($item->price, 2) }}
+                            ${{ number_format($item->unit_price, 2) }}
                         </td>
                         <td class="p-3">
                             {{ $item->quantity }}
                         </td>
                         <td class="p-3 font-medium">
-                            €{{ number_format($item->price * $item->quantity, 2) }}
+                            ${{ number_format($item->unit_price * $item->quantity, 2) }}
                         </td>
                     </tr>
                     @empty

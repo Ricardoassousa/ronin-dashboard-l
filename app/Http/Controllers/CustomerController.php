@@ -19,7 +19,7 @@ class CustomerController extends Controller
     {
         $customers = Customer::query()
             ->when($request->name, fn($q) =>
-                $q->where('name', 'like', "%{$request->name}%")
+                $q->where('first_name', 'like', "%{$request->name}%")
             )
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -82,6 +82,39 @@ class CustomerController extends Controller
         ]);
 
         return back()->with('success', 'Customer status updated successfully.');
+    }
+
+    /**
+     * Handle bulk actions for customers (block or unblock selected customers).
+     *
+     * @param  Request  $request
+     * @return RedirectResponse
+     */
+    public function bulk(Request $request): RedirectResponse
+    {
+        // Check if any customers were selected
+        if (!$request->filled('selected')) {
+            return back()->with('error', 'No customers selected.');
+        }
+
+        // Retrieve the selected customers
+        $customers = Customer::whereIn('id', $request->selected);
+
+        // Apply the bulk action
+        switch ($request->bulk_action) {
+            case 'block':
+                $customers->update(['is_blocked' => true]);
+                break;
+
+            case 'unblock':
+                $customers->update(['is_blocked' => false]);
+                break;
+
+            default:
+                return back()->with('error', 'Invalid action.');
+        }
+
+        return back()->with('success', 'Bulk action applied successfully.');
     }
 
 }

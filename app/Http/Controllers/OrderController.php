@@ -14,11 +14,23 @@ class OrderController extends Controller
      *
      * @return View
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::with('customer')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Order::with('customer');
+
+        // Filter by customer name
+        if ($request->filled('customer')) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('first_name', 'like', '%' . $request->customer . '%');
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.orders.index', compact('orders'));
     }

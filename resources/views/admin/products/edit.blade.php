@@ -19,7 +19,7 @@
 
         <!-- Price -->
         <div>
-            <label for="price" class="block font-medium mb-1">Price (€)</label>
+            <label for="price" class="block font-medium mb-1">Price ($)</label>
             <input type="number" step="0.01" id="price" name="price" value="{{ old('price', $product->price) }}"
                    class="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
             @error('price') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror

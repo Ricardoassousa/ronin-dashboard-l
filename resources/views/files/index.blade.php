@@ -29,11 +29,11 @@
                     <td class="p-2 font-medium">{{ $file->filename }}</td>
 
                     <td class="p-2">
-                        @if(\Illuminate\Support\Str::endsWith($file->path, ['jpg', 'jpeg', 'png']))
-                            <img src="{{ asset('storage/' . $file->path) }}" 
-                                 class="h-12 rounded" 
-                                 alt="File preview">
-                        @else
+                        @if(\Illuminate\Support\Str::endsWith($file->path, ['jpg','jpeg','png']))
+                            <img src="{{ route('admin.files.preview', $file->id) }}"
+                                class="h-12 rounded"
+                                alt="Document">
+                        ​@else
                             <span class="text-gray-500">Document</span>
                         @endif
                     </td>
@@ -43,13 +43,12 @@
                     </td>
 
                     <td class="p-2 space-x-2">
-                        <a href="{{ asset('storage/' . $file->path) }}" 
-                           target="_blank"
+                        <a href="{{ route('admin.files.download', $file->id) }}"
                            class="text-blue-600 hover:underline">
-                           View
+                           Download
                         </a>
 
-                        <form action="{{ route('admin.files.destroy', $file) }}" 
+                        <form action="{{ route('admin.files.destroy', $file) }}"
                               method="POST" 
                               class="inline">
                             @csrf

@@ -78,6 +78,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Files
     Route::resource('files', FileController::class);
+    Route::get('files/download/{file}', [FileController::class, 'download'])
+        ->name('files.download');
+    Route::get('files/preview/{file}', [FileController::class, 'preview'])
+        ->name('files.preview');
 });
 
 require __DIR__ . '/auth.php';

@@ -95,7 +95,7 @@ The Laravel 9 Dashboard project implements the following core features:
 ### File Management
 - [x] Upload files/images
 - [x] Validate file types and size
-- [ ] Store files securely
+- [x] Store files securely
 - [x] Display previews of uploaded files
 
 ### Notifications

@@ -20,6 +20,7 @@
                     ['route' => 'admin.categories.index', 'icon' => 'category', 'label' => 'Categories'],
                     ['route' => 'admin.customers.index', 'icon' => 'people', 'label' => 'Customers'],
                     ['route' => 'admin.orders.index', 'icon' => 'shopping_cart', 'label' => 'Orders'],
+                    ['route' => 'admin.files.index', 'icon' => 'folder', 'label' => 'Files']
                 ];
             @endphp
 

@@ -29,7 +29,7 @@ class FileController extends Controller
             'total_files' => $files->total(),
         ]);
 
-        return view('files.index', compact('files'));
+        return view('admin.files.index', compact('files'));
     }
 
     /**
@@ -43,7 +43,7 @@ class FileController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return view('files.create');
+        return view('admin.files.create');
     }
 
     /**

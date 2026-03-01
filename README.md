@@ -99,7 +99,7 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Display previews of uploaded files
 
 ### Notifications
-- [ ] Flash messages
+- [x] Flash messages
 - [ ] In-app notifications
 - [ ] Email notifications
 

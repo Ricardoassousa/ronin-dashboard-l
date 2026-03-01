@@ -12,6 +12,18 @@
         </a>
     </div>
 
+    @if(session('success'))
+        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded shadow">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Filter Form -->
     <form method="GET" class="mb-4 flex gap-2">
         <input type="text" name="name" placeholder="Search by name..." value="{{ request('name') }}" 

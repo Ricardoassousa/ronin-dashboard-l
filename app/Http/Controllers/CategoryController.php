@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -17,6 +18,11 @@ class CategoryController extends Controller
      */
     public function index(Request $request): View
     {
+        Log::info('Accessing category index', [
+            'user_id' => auth()->id(),
+            'filters' => $request->only('name')
+        ]);
+
         $query = Category::query();
 
         // Filter by name
@@ -36,6 +42,10 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
+        Log::info('Accessing category create page', [
+            'user_id' => auth()->id()
+        ]);
+
         return view('admin.categories.create');
     }
 
@@ -52,7 +62,13 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Category::create($request->only('name', 'description'));
+        $category = Category::create($request->only('name', 'description'));
+
+        Log::info('Category created successfully', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id,
+            'category_name' => $category->name
+        ]);
 
         return redirect()->route('admin.categories.index')
                          ->with('success', 'Category created successfully.');
@@ -66,6 +82,11 @@ class CategoryController extends Controller
      */
     public function show(Category $category): View
     {
+        Log::info('Viewing category details', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id
+        ]);
+
         return view('admin.categories.show', compact('category'));
     }
 
@@ -77,6 +98,11 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): View
     {
+        Log::info('Accessing category edit page', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id
+        ]);
+
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -94,7 +120,16 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
+        $oldData = $category->only('name', 'description');
+
         $category->update($request->only('name', 'description'));
+
+        Log::info('Category updated successfully', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id,
+            'old_data' => $oldData,
+            'new_data' => $category->fresh()->only('name', 'description')
+        ]);
 
         return redirect()->route('admin.categories.index')
                          ->with('success', 'Category updated successfully.');
@@ -110,11 +145,26 @@ class CategoryController extends Controller
     {
         // Optional: prevent deletion if category has products
         if ($category->products()->count()) {
+
+            Log::warning('Attempted to delete category with products', [
+                'user_id' => auth()->id(),
+                'category_id' => $category->id
+            ]);
+
             return redirect()->route('admin.categories.index')
                              ->with('error', 'Cannot delete category with products.');
         }
 
+        $categoryId = $category->id;
+        $categoryName = $category->name;
+
         $category->delete();
+
+        Log::info('Category deleted successfully', [
+            'user_id' => auth()->id(),
+            'category_id' => $categoryId,
+            'category_name' => $categoryName
+        ]);
 
         return redirect()->route('admin.categories.index')
                          ->with('success', 'Category deleted successfully.');

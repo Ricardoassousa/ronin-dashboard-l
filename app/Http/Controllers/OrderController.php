@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
@@ -16,6 +17,14 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
+        Log::info('Accessing order index', [
+            'user_id' => auth()->id(),
+            'filters' => [
+                'customer' => $request->customer,
+                'status'   => $request->status,
+            ]
+        ]);
+
         $query = Order::with('customer');
 
         // Filter by customer name
@@ -43,6 +52,11 @@ class OrderController extends Controller
      */
     public function show(Order $order): View
     {
+        Log::info('Viewing order details', [
+            'user_id'  => auth()->id(),
+            'order_id' => $order->id
+        ]);
+
         $order->load('orderItems.product', 'customer');
 
         return view('admin.orders.show', compact('order'));
@@ -61,8 +75,17 @@ class OrderController extends Controller
             'status' => 'required|in:pending,paid,shipped,cancelled',
         ]);
 
+        $oldStatus = $order->status;
+
         $order->update([
             'status' => $data['status'],
+        ]);
+
+        Log::info('Order status updated', [
+            'user_id'    => auth()->id(),
+            'order_id'   => $order->id,
+            'old_status' => $oldStatus,
+            'new_status' => $data['status']
         ]);
 
         return back()->with('success', 'Order status updated successfully.');

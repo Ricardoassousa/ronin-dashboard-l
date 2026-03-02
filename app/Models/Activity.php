@@ -10,6 +10,12 @@ class Activity extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'type',
+        'description',
+        'user_id'
+    ];
+
     /**
      * Get the user that this activity belongs to.
      *

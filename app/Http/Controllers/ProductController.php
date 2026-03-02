@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
@@ -18,6 +19,14 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
+        Log::info('Accessing product index', [
+            'user_id' => auth()->id(),
+            'filters' => [
+                'name' => $request->name,
+                'category_id' => $request->category_id,
+            ]
+        ]);
+
         $products = Product::query()
             ->when($request->name, fn($q) => $q->where('name', 'like', "%{$request->name}%"))
             ->when($request->category_id, fn($q) => $q->where('category_id', $request->category_id))
@@ -33,6 +42,10 @@ class ProductController extends Controller
      */
     public function create(): View
     {
+        Log::info('Accessing product create page', [
+            'user_id' => auth()->id()
+        ]);
+
         $categories = Category::all();
         return view('admin.products.create', compact('categories'));
     }
@@ -52,7 +65,15 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        Log::info('Product created successfully', [
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'price' => $product->price,
+            'stock' => $product->stock
+        ]);
 
         return redirect()->route('admin.products.index')
                          ->with('success', 'Product created successfully.');
@@ -66,6 +87,11 @@ class ProductController extends Controller
      */
     public function show(Product $product): View
     {
+        Log::info('Viewing product details', [
+            'user_id' => auth()->id(),
+            'product_id' => $product->id
+        ]);
+
         return view('admin.products.show', compact('product'));
     }
 
@@ -77,6 +103,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
+        Log::info('Accessing product edit page', [
+            'user_id' => auth()->id(),
+            'product_id' => $product->id
+        ]);
+
         $categories = Category::all();
         return view('admin.products.edit', compact('product', 'categories'));
     }
@@ -97,7 +128,16 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
 
+        $oldData = $product->only(['name', 'price', 'stock', 'category_id']);
+
         $product->update($data);
+
+        Log::info('Product updated successfully', [
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+            'old_data' => $oldData,
+            'new_data' => $product->fresh()->only(['name', 'price', 'stock', 'category_id'])
+        ]);
 
         return redirect()->route('admin.products.index')
                          ->with('success', 'Product updated successfully.');
@@ -111,7 +151,16 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
+        $productId = $product->id;
+        $productName = $product->name;
+
         $product->delete();
+
+        Log::info('Product deleted successfully', [
+            'user_id' => auth()->id(),
+            'product_id' => $productId,
+            'product_name' => $productName
+        ]);
 
         return back()->with('success', 'Product deleted successfully.');
     }

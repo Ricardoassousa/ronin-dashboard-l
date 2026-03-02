@@ -100,8 +100,8 @@ The Laravel 9 Dashboard project implements the following core features:
 
 ### Notifications
 - [x] Flash messages
-- [ ] In-app notifications
-- [ ] Email notifications
+- [x] In-app notifications
+- [x] Email notifications
 
 ### Permissions & Security
 - [ ] Admin-only sections

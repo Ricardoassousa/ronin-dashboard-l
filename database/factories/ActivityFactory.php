@@ -17,7 +17,7 @@ class ActivityFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElement(['order', 'user', 'product']);
+        $type = $this->faker->randomElement(['order', 'customer', 'product']);
 
         $productNames = [
             'Wireless Headphones',

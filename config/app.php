@@ -145,6 +145,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Prefix
+    |--------------------------------------------------------------------------
+    |
+    | Esta constante define o prefixo usado nas rotas de administração.
+    | Permite alterar facilmente o URL da área admin sem modificar
+    | todas as rotas manualmente.
+    |
+    */
+    'admin_prefix' => 'admin',
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |

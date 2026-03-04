@@ -33,6 +33,14 @@ class SimulateOrder extends Command
     {
         $customer = Customer::inRandomOrder()->first();
 
+        if (!$customer) {
+            $this->warn('No customers found. Creating a new customer...');
+
+            $customer = Customer::factory()->create();
+
+            $this->info("Customer #{$customer->id} created.");
+        }
+
         $order = Order::factory()->create([
             'customer_id' => $customer->id,
             'status' => 'pending',

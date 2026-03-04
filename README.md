@@ -107,7 +107,7 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Admin-only sections
 - [x] User roles & permissions
 - [x] Middleware for route protection
-- [ ] Audit logs / activity tracking (extra)
+- [x] Audit logs / activity tracking (extra)
 
 ### UX/UI
 - [ ] Responsive layout

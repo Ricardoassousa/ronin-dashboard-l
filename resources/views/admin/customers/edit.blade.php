@@ -18,18 +18,34 @@
         @csrf
         @method('PUT')
 
-        <!-- Name -->
+        <!-- First Name -->
         <div>
-            <label for="name" class="block font-medium text-gray-700 mb-1">
-                Name
+            <label for="first_name" class="block font-medium text-gray-700 mb-1">
+                First Name
             </label>
             <input type="text"
-                   name="name"
-                   id="name"
-                   value="{{ old('name', $customer->name) }}"
+                   name="first_name"
+                   id="first_name"
+                   value="{{ old('first_name', $customer->first_name) }}"
                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-            @error('name')
+            @error('first_name')
+                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- Last Name -->
+        <div>
+            <label for="last_name" class="block font-medium text-gray-700 mb-1">
+                Last Name
+            </label>
+            <input type="text"
+                   name="last_name"
+                   id="last_name"
+                   value="{{ old('last_name', $customer->last_name) }}"
+                   class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            @error('last_name')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>

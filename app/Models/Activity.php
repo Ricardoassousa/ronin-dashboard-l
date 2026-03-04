@@ -13,7 +13,7 @@ class Activity extends Model
     protected $fillable = [
         'type',
         'description',
-        'user_id'
+        'user_id',
     ];
 
     /**
@@ -25,5 +25,4 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

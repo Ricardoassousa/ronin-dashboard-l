@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
@@ -66,7 +67,7 @@ class CustomerController extends Controller
     }
 
     /**
-     * Update the specified customer.
+     * Update the specified customer in storage.
      *
      * @param Request $request
      * @param Customer $customer
@@ -74,24 +75,44 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer): RedirectResponse
     {
-        $data = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:customers,email,' . $customer->id,
-        ]);
+        try {
+            $data = $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'nullable|string|max:255',
+                'email' => 'required|email|max:255|unique:customers,email,' . $customer->id,
+                'phone' => 'nullable|string|max:50',
+            ]);
 
-        $oldData = $customer->only('name', 'email');
+            $oldData = $customer->only(['first_name', 'last_name', 'email', 'phone']);
 
-        $customer->update($data);
+            $customer->update($data);
 
-        Log::info('Customer updated successfully', [
-            'user_id' => auth()->id(),
-            'customer_id' => $customer->id,
-            'old_data' => $oldData,
-            'new_data' => $customer->fresh()->only('name', 'email')
-        ]);
+            activity('customer')
+                ->performedOn($customer)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'old' => $oldData,
+                    'new' => $customer->only(['first_name', 'last_name', 'email', 'phone'])
+                ])
+                ->log('Customer updated');
 
-        return redirect()->route('admin.customers.index')
-                         ->with('success', 'Customer updated successfully.');
+            Log::info('Customer updated successfully', [
+                'user_id' => auth()->id(),
+                'customer_id' => $customer->id
+            ]);
+
+            return redirect()->route('admin.customers.index')
+                             ->with('success', 'Customer updated successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Customer update failed', [
+                'user_id' => auth()->id(),
+                'customer_id' => $customer->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to update customer. Please try again.');
+        }
     }
 
     /**
@@ -102,76 +123,106 @@ class CustomerController extends Controller
      */
     public function toggleBlock(Customer $customer): RedirectResponse
     {
-        $newStatus = !$customer->is_blocked;
+        try {
+            $newStatus = !$customer->is_blocked;
 
-        $customer->update([
-            'is_blocked' => $newStatus,
-        ]);
+            $customer->update([
+                'is_blocked' => $newStatus,
+            ]);
 
-        Log::info('Customer block status toggled', [
-            'user_id' => auth()->id(),
-            'customer_id' => $customer->id,
-            'new_status' => $newStatus ? 'blocked' : 'unblocked'
-        ]);
+            activity('customer')
+                ->performedOn($customer)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'new_status' => $newStatus ? 'blocked' : 'unblocked'
+                ])
+                ->log('Customer block status toggled');
 
-        return back()->with('success', 'Customer status updated successfully.');
+            Log::info('Customer block status updated', [
+                'user_id' => auth()->id(),
+                'customer_id' => $customer->id,
+                'status' => $newStatus ? 'blocked' : 'unblocked'
+            ]);
+
+            return back()->with('success', 'Customer status updated successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Customer block toggle failed', [
+                'user_id' => auth()->id(),
+                'customer_id' => $customer->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to update customer status. Please try again.');
+        }
     }
 
     /**
      * Handle bulk actions for customers (block or unblock selected customers).
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return RedirectResponse
      */
     public function bulk(Request $request): RedirectResponse
     {
-        // Check if any customers were selected
-        if (!$request->filled('selected')) {
+        try {
+            if (!$request->filled('selected')) {
+                Log::warning('Bulk action attempted without selecting customers', [
+                    'user_id' => auth()->id()
+                ]);
 
-            Log::warning('Bulk action attempted without selecting customers', [
-                'user_id' => auth()->id()
+                return back()->with('error', 'No customers selected.');
+            }
+
+            $selectedIds = $request->selected;
+            $customers = Customer::whereIn('id', $selectedIds);
+
+            switch ($request->bulk_action) {
+                case 'block':
+                    $customers->update(['is_blocked' => true]);
+
+                    activity('customer-bulk')
+                        ->causedBy(auth()->user())
+                        ->withProperties(['customer_ids' => $selectedIds])
+                        ->log('Bulk block applied');
+                    break;
+
+                case 'unblock':
+                    $customers->update(['is_blocked' => false]);
+
+                    activity('customer-bulk')
+                        ->causedBy(auth()->user())
+                        ->withProperties(['customer_ids' => $selectedIds])
+                        ->log('Bulk unblock applied');
+                    break;
+
+                default:
+                    activity('customer-bulk')
+                        ->causedBy(auth()->user())
+                        ->withProperties([
+                            'customer_ids' => $selectedIds,
+                            'action' => $request->bulk_action
+                        ])
+                        ->log('Invalid bulk action attempted');
+
+                    return back()->with('error', 'Invalid action.');
+            }
+
+            Log::info('Bulk action applied successfully', [
+                'user_id' => auth()->id(),
+                'customer_ids' => $selectedIds,
+                'action' => $request->bulk_action
             ]);
 
-            return back()->with('error', 'No customers selected.');
+            return back()->with('success', 'Bulk action applied successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Bulk customer action failed', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to apply bulk action. Please try again.');
         }
-
-        $selectedIds = $request->selected;
-
-        // Retrieve the selected customers
-        $customers = Customer::whereIn('id', $selectedIds);
-
-        switch ($request->bulk_action) {
-
-            case 'block':
-                $customers->update(['is_blocked' => true]);
-
-                Log::info('Bulk block action applied', [
-                    'user_id' => auth()->id(),
-                    'customer_ids' => $selectedIds
-                ]);
-                break;
-
-            case 'unblock':
-                $customers->update(['is_blocked' => false]);
-
-                Log::info('Bulk unblock action applied', [
-                    'user_id' => auth()->id(),
-                    'customer_ids' => $selectedIds
-                ]);
-                break;
-
-            default:
-
-                Log::warning('Invalid bulk action attempted', [
-                    'user_id' => auth()->id(),
-                    'action' => $request->bulk_action,
-                    'customer_ids' => $selectedIds
-                ]);
-
-                return back()->with('error', 'Invalid action.');
-        }
-
-        return back()->with('success', 'Bulk action applied successfully.');
     }
-
 }

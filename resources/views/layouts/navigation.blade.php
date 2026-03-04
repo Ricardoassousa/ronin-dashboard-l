@@ -15,7 +15,7 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    @if(auth()->user()->role === 'admin')
+                    @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
                         <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
                             {{ __('Admin Panel') }}
                         </x-nav-link>

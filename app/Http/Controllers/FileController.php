@@ -73,12 +73,15 @@ class FileController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            Log::info('File uploaded successfully.', [
-                'user_id' => auth()->id(),
-                'file_id' => $file->id,
-                'filename' => $file->filename,
-                'path' => $file->path,
-            ]);
+            activity('file')
+                ->performedOn($file)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'filename' => $file->filename,
+                    'path' => $file->path,
+                    'user_id' => auth()->id(),
+                ])
+                ->log('File uploaded');
 
             return redirect()
                 ->back()
@@ -86,10 +89,12 @@ class FileController extends Controller
 
         } catch (Exception $e) {
 
-            Log::error('File upload failed.', [
-                'user_id' => auth()->id(),
-                'error' => $e->getMessage(),
-            ]);
+            activity('file-error')
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'error' => $e->getMessage()
+                ])
+                ->log('File upload failed');
 
             return redirect()
                 ->back()
@@ -111,19 +116,29 @@ class FileController extends Controller
         try {
             $this->authorize('delete', $file);
 
+            $fileId = $file->id;
+            $filename = $file->filename;
+            $path = $file->path;
+
             if (Storage::disk('private')->exists($file->path)) {
                 Storage::disk('private')->delete($file->path);
-                Log::info('Physical file deleted from storage.', [
-                    'user_id' => auth()->id(),
-                    'file_id' => $file->id,
-                    'path' => $file->path,
-                ]);
+
+                activity('file')
+                    ->performedOn($file)
+                    ->causedBy(auth()->user())
+                    ->withProperties([
+                        'file_id' => $fileId,
+                        'filename' => $filename,
+                    ])
+                    ->log('File deleted from storage');
             } else {
-                Log::warning('Attempted to delete file that does not exist.', [
-                    'user_id' => auth()->id(),
-                    'file_id' => $file->id,
-                    'path' => $file->path,
-                ]);
+                activity('file-warning')
+                    ->causedBy(auth()->user())
+                    ->withProperties([
+                        'file_id' => $fileId,
+                        'path' => $path,
+                    ])
+                    ->log('Attempted to delete non-existent file');
             }
 
             $file->delete();
@@ -166,22 +181,26 @@ class FileController extends Controller
         try {
             $this->authorize('view', $file);
 
-            Log::info('File download initiated.', [
-                'user_id' => auth()->id(),
-                'file_id' => $file->id,
-                'filename' => $file->filename,
-                'path' => $file->path
-            ]);
+            activity('file-download')
+                ->performedOn($file)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'filename' => $file->filename,
+                    'path' => $file->path
+                ])
+                ->log('File download initiated');
 
             return Storage::disk('private')->download($file->path, $file->filename);
 
         } catch (AuthorizationException $e) {
 
-            Log::warning('Unauthorized file download attempt.', [
-                'user_id' => auth()->id(),
-                'file_id' => $file->id,
-                'filename' => $file->filename
-            ]);
+            activity('file-download-warning')
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'file_id' => $file->id,
+                    'filename' => $file->filename
+                ])
+                ->log('Unauthorized file download attempt');
 
             return redirect()->back()->with('error', 'You are not authorized to download this file.');
 

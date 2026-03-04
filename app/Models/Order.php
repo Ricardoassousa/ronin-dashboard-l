@@ -16,7 +16,7 @@ class Order extends Model
         'payment_method',
         'shipping_address',
         'billing_address',
-        'placed_at'
+        'placed_at',
     ];
 
     public function customer()
@@ -28,5 +28,4 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
-
 }

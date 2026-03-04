@@ -44,7 +44,7 @@
                                 </div>
                                 <span class="px-2 py-1 text-xs font-semibold rounded text-white
                                     @if($activity->type === 'order') bg-blue-500
-                                    @elseif($activity->type === 'user') bg-green-500
+                                    @elseif($activity->type === 'customer') bg-green-500
                                     @elseif($activity->type === 'product') bg-purple-500
                                     @else bg-gray-400 @endif">
                                     {{ ucfirst($activity->type) }}

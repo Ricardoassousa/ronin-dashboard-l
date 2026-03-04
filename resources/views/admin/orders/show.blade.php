@@ -48,7 +48,7 @@
             </p>
 
             <p class="mt-2">
-                <strong>Total:</strong> €{{ number_format($order->total_amount, 2) }}
+                <strong>Total:</strong> ${{ number_format($order->total_amount, 2) }}
             </p>
 
             <p class="mt-2">

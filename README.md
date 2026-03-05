@@ -110,6 +110,6 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Audit logs / activity tracking (extra)
 
 ### UX/UI
-- [ ] Responsive layout
+- [x] Responsive layout
 - [ ] Consistent navigation
 - [ ] Alerts for success/error

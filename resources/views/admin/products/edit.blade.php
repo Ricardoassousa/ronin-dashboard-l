@@ -51,16 +51,14 @@
             <select id="category_id" name="category_id"
                 class="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="">-- Select Category --</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}"
-                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('category_id')
-                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                @enderror
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}"
+                        {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('category_id') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
 
         <!-- Description -->
@@ -72,13 +70,13 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="flex justify-end gap-2">
+        <div class="flex flex-col sm:flex-row gap-2 pt-4">
             <a href="{{ route('admin.products.index') }}"
-               class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded shadow transition">
+               class="w-full sm:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded shadow transition text-center">
                Cancel
             </a>
             <button type="submit"
-                    class="bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded shadow transition">
+                    class="w-full sm:w-auto bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded shadow transition">
                 Update Product
             </button>
         </div>

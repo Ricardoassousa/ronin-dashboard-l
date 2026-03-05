@@ -2,17 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Panel</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100" x-data="{ sidebarOpen: false }">
 
-<div class="flex min-h-screen">
+<!-- Main flex container -->
+<div class="flex h-screen">
 
-    <aside class="w-72 bg-gray-900 text-white p-6 shadow-lg rounded-r-xl flex flex-col">
-        <h2 class="text-2xl font-bold text-center text-white border-b border-gray-700 pb-4 mb-6">Admin Panel</h2>
+    <!-- Mobile overlay -->
+    <div x-show="sidebarOpen"
+         class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+         x-transition.opacity
+         @click="sidebarOpen = false">
+    </div>
 
-        <nav class="flex-1 space-y-4">
+    <!-- Sidebar -->
+    <aside
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        class="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white shadow-lg flex flex-col z-30
+               transform transition-transform duration-300 md:translate-x-0 overflow-y-auto">
+
+        <!-- Sidebar header -->
+        <h2 class="text-2xl font-bold text-center border-b border-gray-700 pb-4 mb-6">
+            Admin Panel
+        </h2>
+
+        <!-- Navigation -->
+        <nav class="flex-1 space-y-4 px-4 pb-4">
             @php
                 $links = [
                     ['route' => 'dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
@@ -20,36 +38,48 @@
                     ['route' => 'admin.categories.index', 'icon' => 'category', 'label' => 'Categories'],
                     ['route' => 'admin.customers.index', 'icon' => 'people', 'label' => 'Customers'],
                     ['route' => 'admin.orders.index', 'icon' => 'shopping_cart', 'label' => 'Orders'],
-                    ['route' => 'admin.files.index', 'icon' => 'folder', 'label' => 'Files']
+                    ['route' => 'admin.files.index', 'icon' => 'folder', 'label' => 'Files'],
                 ];
             @endphp
 
             @foreach($links as $link)
                 <a href="{{ route($link['route']) }}"
-                    class="flex items-center gap-3 p-3 rounded transition-colors duration-200 text-white
-                            border-l-4 border-transparent
-                            hover:bg-gray-800
-                            {{ request()->routeIs($link['route']) || request()->routeIs($link['route'].'.*') ? 'bg-gray-800 border-blue-500' : '' }}">
-                    <span class="flex-shrink-0 w-8 flex justify-center material-icons text-lg">
-                        {{ $link['icon'] }}
-                    </span>
-                    <span class="text-lg font-medium">{{ $link['label'] }}</span>
+                   class="flex items-center gap-3 p-3 rounded transition-colors duration-200
+                          border-l-4 border-transparent hover:bg-gray-800
+                          {{ request()->routeIs($link['route']) || request()->routeIs($link['route'].'.*') ? 'bg-gray-800 border-blue-500' : 'text-white' }}">
+                    <span class="material-icons w-8 flex justify-center">{{ $link['icon'] }}</span>
+                    <span class="font-medium">{{ $link['label'] }}</span>
                 </a>
             @endforeach
         </nav>
 
-        <div class="mt-10 text-center text-gray-400 text-sm">
+        <!-- Sidebar footer -->
+        <div class="text-center text-gray-400 text-sm px-4 pb-4">
             &copy; {{ date('Y') }} Ronin Dashboard
         </div>
     </aside>
 
-    <main class="flex-1 p-8 bg-gray-100">
-        @yield('content')
-    </main>
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col md:ml-64">
+
+        <!-- Mobile top bar -->
+        <header class="md:hidden bg-gray-900 text-white flex items-center justify-between p-4 shadow">
+            <h1 class="text-lg font-bold">Admin Panel</h1>
+            <button @click="sidebarOpen = !sidebarOpen" class="material-icons text-2xl">
+                menu
+            </button>
+        </header>
+
+        <!-- Page content -->
+        <main class="flex-1 p-4 sm:p-6 overflow-auto bg-gray-100">
+            @yield('content')
+        </main>
+
+    </div>
 
 </div>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
+<script src="//unpkg.com/alpinejs" defer></script>
 </body>
 </html>

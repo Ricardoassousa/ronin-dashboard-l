@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('description');
-            $table->string('type')->nullable(); // order, customer, product
+            $table->string('type')->nullable(); // category, customer, file, product, order
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });

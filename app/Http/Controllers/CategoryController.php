@@ -61,10 +61,9 @@ class CategoryController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
-                'description' => 'nullable|string',
             ]);
 
-            $category = Category::create($request->only('name', 'description'));
+            $category = Category::create($request->only('name'));
 
             Log::info('Category created', [
                 'user_id' => auth()->id(),
@@ -129,18 +128,17 @@ class CategoryController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-                'description' => 'nullable|string',
             ]);
 
-            $oldData = $category->only('name', 'description');
+            $oldData = $category->only('name');
 
-            $category->update($request->only('name', 'description'));
+            $category->update($request->only('name'));
 
             Log::info('Category updated', [
                 'user_id' => auth()->id(),
                 'category_id' => $category->id,
                 'old' => $oldData,
-                'new' => $category->only('name', 'description')
+                'new' => $category->only('name')
             ]);
 
             return redirect()->route('admin.categories.index')

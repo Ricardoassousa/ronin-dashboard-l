@@ -32,5 +32,4 @@ class OrderItemFactory extends Factory
             'total_price' => $unitPrice * $quantity
         ];
     }
-
 }

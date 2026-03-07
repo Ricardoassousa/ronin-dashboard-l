@@ -12,6 +12,19 @@
         </a>
     </div>
 
+    <!-- Alerts -->
+    @if(session('success'))
+        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded shadow">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Order + Customer Info -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 
@@ -43,7 +56,13 @@
         <!-- Customer Info -->
         <div class="bg-white shadow rounded p-6">
             <h2 class="text-lg font-semibold mb-4">Customer</h2>
-            <p><strong>Name:</strong> {{ $order->customer->first_name ?? 'N/A' }}</p>
+            <p><strong>Name:</strong>
+                @if($order->customer)
+                    {{ $order->customer->first_name }} {{ $order->customer->last_name }}
+                @else
+                    N/A
+                @endif
+            </p>
             <p class="mt-2"><strong>Email:</strong> {{ $order->customer->email ?? 'N/A' }}</p>
         </div>
 

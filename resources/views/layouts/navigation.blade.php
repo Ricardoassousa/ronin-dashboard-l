@@ -15,8 +15,10 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
                     @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
-                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.index')">
+                        {{-- Keeps "Admin Panel" active for any route starting with admin. --}}
+                        <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin Panel') }}
                         </x-nav-link>
                     @endif
@@ -75,6 +77,13 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(auth()->user()->role === \App\Models\User::ROLE_ADMIN)
+                {{-- Keeps "Admin Panel" active on mobile for any admin route --}}
+                <x-responsive-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.*')">
+                    {{ __('Admin Panel') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

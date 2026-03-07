@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.5s="loadData"> 
 
     <!-- Dashboard vertical spacing -->
     <div class="py-6">
@@ -13,8 +13,8 @@
                 <div class="space-y-4">
 
                     <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 shadow rounded flex flex-col items-center">
-                        <p class="text-gray-200 text-sm font-semibold">Total Users</p>
-                        <p class="text-3xl font-bold">{{ $stats['users'] }}</p>
+                        <p class="text-gray-200 text-sm font-semibold">Total Customers</p>
+                        <p class="text-3xl font-bold">{{ $stats['customers'] }}</p>
                     </div>
 
                     <div class="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 shadow rounded flex flex-col items-center">
@@ -24,7 +24,7 @@
 
                     <div class="bg-gradient-to-r from-purple-500 to-purple-700 text-white p-6 shadow rounded flex flex-col items-center">
                         <p class="text-gray-200 text-sm font-semibold">Total Revenue</p>
-                        <p class="text-3xl font-bold">{{ $stats['revenue'] ?? 'N/A' }}</p>
+                        <p class="text-3xl font-bold">${{ number_format($stats['revenue'] ?? 0, 2, '.', ',') }}</p>
                     </div>
 
                 </div>
@@ -51,13 +51,14 @@
                                 </div>
 
                                 <span class="px-2 py-1 text-xs font-semibold rounded text-white
-                                    @if($activity->type === 'order') bg-blue-500
-                                    @elseif($activity->type === 'customer') bg-green-500
+                                    @if($activity->type === 'category') bg-orange-500
+                                    @elseif($activity->type === 'customer') bg-blue-500
+                                    @elseif($activity->type === 'file') bg-indigo-500
+                                    @elseif($activity->type === 'order') bg-green-500
                                     @elseif($activity->type === 'product') bg-purple-500
                                     @else bg-gray-400 @endif">
                                     {{ ucfirst($activity->type) }}
-                                </span>
-
+                                </span>                            
                             </div>
                         @empty
                             <p class="text-gray-400">No recent activity.</p>

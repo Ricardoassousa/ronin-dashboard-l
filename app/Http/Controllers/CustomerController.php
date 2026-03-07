@@ -25,9 +25,17 @@ class CustomerController extends Controller
         ]);
 
         $customers = Customer::query()
-            ->when($request->name, fn($q) =>
-                $q->where('first_name', 'like', "%{$request->name}%")
-            )
+            ->when($request->name, function ($query) use ($request) {
+                $searchTerm = $request->name;
+
+                // Group OR statements inside parentheses
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('first_name', 'like', "%{$searchTerm}%")
+                    ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                    // Combined search (MySQL)
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$searchTerm}%"]);
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 

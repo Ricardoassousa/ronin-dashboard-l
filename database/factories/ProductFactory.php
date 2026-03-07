@@ -29,5 +29,4 @@ class ProductFactory extends Factory
             'is_active' => $this->faker->boolean(90)
         ];
     }
-
 }

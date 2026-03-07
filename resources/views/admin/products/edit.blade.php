@@ -5,6 +5,7 @@
 
     <h1 class="text-2xl font-bold mb-6">Edit Product</h1>
 
+    <!-- Alerts -->
     @if(session('success'))
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded shadow">
             {{ session('success') }}

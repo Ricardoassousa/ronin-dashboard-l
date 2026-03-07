@@ -14,6 +14,7 @@
             {{ session('success') }}
         </div>
     @endif
+
     @if(session('error'))
         <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
             {{ session('error') }}
@@ -61,7 +62,13 @@
                 @forelse($orders as $order)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="p-3 font-medium">{{ $order->id }}</td>
-                    <td class="p-3">{{ $order->customer->first_name ?? 'N/A' }}</td>
+                    <td class="p-3">
+                        @if($order->customer)
+                            {{ $order->customer->first_name }} {{ $order->customer->last_name }}
+                        @else
+                            N/A
+                        @endif
+                    </td>
                     <td class="p-3">${{ number_format($order->total_amount, 2) }}</td>
                     <td class="p-3">
                         @switch($order->status)
@@ -83,11 +90,6 @@
                     <td class="p-3">
                         <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:underline hidden md:inline-flex px-2 py-1 border rounded">
                             View
-                        </a>
-
-                        <!-- Mobile icon -->
-                        <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 material-icons md:hidden" title="View">
-                            visibility
                         </a>
                     </td>
                 </tr>

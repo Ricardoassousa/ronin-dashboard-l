@@ -30,5 +30,4 @@ class OrderFactory extends Factory
             'placed_at' => $this->faker->dateTimeThisYear()
         ];
     }
-
 }

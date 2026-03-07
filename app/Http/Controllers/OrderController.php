@@ -24,16 +24,23 @@ class OrderController extends Controller
                 'user_id' => auth()->id(),
                 'filters' => [
                     'customer' => $request->customer,
-                    'status'   => $request->status,
+                    'status' => $request->status,
                 ]
             ]);
 
             $query = Order::with('customer');
 
-            // Filter by customer name
+            // Filter by customer name (First Name or Last Name)
             if ($request->filled('customer')) {
-                $query->whereHas('customer', function ($q) use ($request) {
-                    $q->where('first_name', 'like', '%' . $request->customer . '%');
+                $searchTerm = $request->customer;
+
+                $query->whereHas('customer', function ($q) use ($searchTerm) {
+                    $q->where(function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                        // Optional: Search for the full name combined (MySQL specific)
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+                    });
                 });
             }
 
@@ -66,7 +73,7 @@ class OrderController extends Controller
     {
         try {
             Log::info('Viewing order details', [
-                'user_id'  => auth()->id(),
+                'user_id' => auth()->id(),
                 'order_id' => $order->id
             ]);
 

@@ -12,11 +12,6 @@
         </div>
 
         <div>
-            <h2 class="font-medium text-gray-700">Description:</h2>
-            <p class="text-gray-900">{{ $category->description ?? '-' }}</p>
-        </div>
-
-        <div>
             <h2 class="font-medium text-gray-700">Created At:</h2>
             <p class="text-gray-900">{{ $category->created_at->format('Y-m-d H:i') }}</p>
         </div>

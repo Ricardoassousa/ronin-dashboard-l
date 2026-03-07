@@ -42,7 +42,6 @@
             <thead class="bg-gray-200">
                 <tr>
                     <th class="p-2 text-left">Name</th>
-                    <th class="p-2 text-left">Description</th>
                     <th class="p-2 text-left">Created At</th>
                     <th class="p-2 text-left">Actions</th>
                 </tr>
@@ -51,7 +50,6 @@
                 @foreach($categories as $category)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="p-2">{{ $category->name }}</td>
-                    <td class="p-2">{{ $category->description ?? '-' }}</td>
                     <td class="p-2">{{ $category->created_at->format('Y-m-d') }}</td>
                     <td class="p-2 flex gap-2">
                         <a href="{{ route('admin.categories.show', $category) }}" class="text-blue-600 px-2 py-1 border rounded">View</a>

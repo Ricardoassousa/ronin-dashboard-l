@@ -29,5 +29,4 @@ class CustomerFactory extends Factory
             'is_blocked' => false
         ];
     }
-
 }

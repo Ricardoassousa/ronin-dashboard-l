@@ -27,7 +27,7 @@
                name="name"
                placeholder="Search by name..."
                value="{{ request('name') }}"
-               class="border border-gray-300 p-2 rounded-lg flex-1 focus:ring-2 focus:ring-gray-800">
+               class="border p-2 rounded flex-1">
 
         <button class="bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded-lg shadow transition">
             Filter
@@ -76,7 +76,7 @@
                         <td class="p-3">
                             <input type="checkbox" name="selected[]" value="{{ $customer->id }}" class="row-checkbox rounded border-gray-300 text-gray-800 shadow-sm focus:ring-gray-500">
                         </td>
-                        <td class="p-3 font-medium">{{ $customer->first_name }}</td>
+                        <td class="p-3 font-medium">{{ $customer->first_name }} {{ $customer->last_name }}</td>
                         <td class="p-3">{{ $customer->email }}</td>
                         <td class="p-3">
                             @if($customer->is_blocked)

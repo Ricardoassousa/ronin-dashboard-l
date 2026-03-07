@@ -6,6 +6,19 @@
     <!-- Header -->
     <h1 class="text-2xl font-bold mb-6">Create Category</h1>
 
+    <!-- Alerts -->
+    @if(session('success'))
+        <div class="mb-4 p-3 bg-green-100 text-green-800 rounded shadow">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Form -->
     <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-4">
         @csrf
@@ -16,16 +29,6 @@
             <input type="text" name="name" id="name" value="{{ old('name') }}"
                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
             @error('name')
-                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
-
-        <!-- Description -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1" for="description">Description</label>
-            <textarea name="description" id="description" rows="4"
-                      class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('description') }}</textarea>
-            @error('description')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>

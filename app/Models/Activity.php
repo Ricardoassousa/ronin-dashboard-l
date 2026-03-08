@@ -10,6 +10,12 @@ class Activity extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'type',
+        'description',
+        'user_id',
+    ];
+
     /**
      * Get the user that this activity belongs to.
      *
@@ -19,5 +25,4 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class);
     }
-
 }

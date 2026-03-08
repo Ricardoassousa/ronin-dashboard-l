@@ -5,11 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>Dashboard</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="shortcut icon" href="{{ asset('favicon-copy.ico') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- 1. Livewire Styles -->
+        @livewireStyles
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -32,5 +40,11 @@
                 {{ $slot }}
             </main>
         </div>
+
+        <!-- 2. Livewire Scripts (Must be before </body>) -->
+        @livewireScripts
+
+        <!-- 3. AlpineJS (If not already in app.js, required for Chart persistence) -->
+        <script src="//://unpkg.com" defer></script>
     </body>
 </html>

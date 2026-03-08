@@ -1,16 +1,20 @@
-<div>
+<div wire:poll.5s="loadData"> 
 
+    <!-- Dashboard vertical spacing -->
     <div class="py-6">
+
+        <!-- Responsive container -->
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+            <!-- Responsive grid layout -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 <!-- Widgets -->
                 <div class="space-y-4">
 
                     <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 shadow rounded flex flex-col items-center">
-                        <p class="text-gray-200 text-sm font-semibold">Total Users</p>
-                        <p class="text-3xl font-bold">{{ $stats['users'] }}</p>
+                        <p class="text-gray-200 text-sm font-semibold">Total Customers</p>
+                        <p class="text-3xl font-bold">{{ $stats['customers'] }}</p>
                     </div>
 
                     <div class="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 shadow rounded flex flex-col items-center">
@@ -20,7 +24,7 @@
 
                     <div class="bg-gradient-to-r from-purple-500 to-purple-700 text-white p-6 shadow rounded flex flex-col items-center">
                         <p class="text-gray-200 text-sm font-semibold">Total Revenue</p>
-                        <p class="text-3xl font-bold">{{ $stats['revenue'] ?? 'N/A' }}</p>
+                        <p class="text-3xl font-bold">${{ number_format($stats['revenue'] ?? 0, 2, '.', ',') }}</p>
                     </div>
 
                 </div>
@@ -38,17 +42,23 @@
 
                         @forelse($recentActivities as $activity)
                             <div class="flex justify-between items-center py-1 border-b">
+
                                 <div class="flex flex-col">
                                     <span class="font-medium">{{ $activity->description }}</span>
-                                    <small class="text-gray-400">{{ $activity->user?->name ?? 'System' }} • {{ $activity->created_at->diffForHumans() }}</small>
+                                    <small class="text-gray-400">
+                                        {{ $activity->user?->name ?? 'System' }} • {{ $activity->created_at->diffForHumans() }}
+                                    </small>
                                 </div>
+
                                 <span class="px-2 py-1 text-xs font-semibold rounded text-white
-                                    @if($activity->type === 'order') bg-blue-500
-                                    @elseif($activity->type === 'user') bg-green-500
+                                    @if($activity->type === 'category') bg-orange-500
+                                    @elseif($activity->type === 'customer') bg-blue-500
+                                    @elseif($activity->type === 'file') bg-indigo-500
+                                    @elseif($activity->type === 'order') bg-green-500
                                     @elseif($activity->type === 'product') bg-purple-500
                                     @else bg-gray-400 @endif">
                                     {{ ucfirst($activity->type) }}
-                                </span>
+                                </span>                            
                             </div>
                         @empty
                             <p class="text-gray-400">No recent activity.</p>
@@ -56,49 +66,73 @@
                     </div>
 
                 </div>
+
             </div>
 
         </div>
+
     </div>
 
-    {{-- Chart.js --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        let chart;
-
-        function renderChart(labels, data) {
-            const ctx = document.getElementById('ordersChart').getContext('2d');
-
-            if (chart) chart.destroy();
-
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Orders',
-                        data: data,
-                        borderColor: 'rgba(54,162,235,1)',
-                        backgroundColor: 'rgba(54,162,235,0.2)',
-                        borderWidth: 2,
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-
-        // Current data chart
-        renderChart(@json(array_keys($ordersPerDay ?? [])), @json(array_values($ordersPerDay ?? [])));
-
-        // Update data chart with Liveware
-        window.addEventListener('refreshChart', event => {
-            renderChart(event.detail.labels, event.detail.values);
-        });
-    </script>
-
 </div>
+
+{{-- Chart.js library --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let chart;
+
+    // Function that renders the chart
+    function renderChart(labels, data) {
+
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+
+        // Destroy existing chart before rendering a new one
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+
+            // Line chart type
+            type: 'line',
+
+            data: {
+                labels: labels,
+
+                datasets: [{
+                    label: 'Orders',
+
+                    data: data,
+
+                    borderColor: 'rgba(54,162,235,1)',
+                    backgroundColor: 'rgba(54,162,235,0.2)',
+
+                    borderWidth: 2,
+                    tension: 0.3,
+
+                    // Fill area below line
+                    fill: true
+                }]
+            },
+
+            options: {
+
+                // Enables responsive behaviour
+                responsive: true,
+
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Render chart with current data
+    renderChart(@json(array_keys($ordersPerDay ?? [])), @json(array_values($ordersPerDay ?? [])));
+
+    // Livewire event to refresh chart data dynamically
+    window.addEventListener('refreshChart', event => {
+        renderChart(event.detail.labels, event.detail.values);
+    });
+
+</script>

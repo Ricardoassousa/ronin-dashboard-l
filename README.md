@@ -1,69 +1,43 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RONIN-DASHBOARD-L
+A professional administrative dashboard built with **Laravel 9** and **PHP 8.2**.
+This project demonstrates full-stack web development skills, including backend logic, database integration, templating with Blade, and responsive frontend design.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+It allows administrators to:
 
-## About Laravel
+- Manage products (create, edit, delete and filter)
+- Manage categories (create, edit, delete and filter)
+- Manage files (upload, download and delete)
+- View and update orders, including order status
+- Manage customers and their account statuses
+- Search and filter products, orders, and customers
+- Monitor dashboard statistics and summaries
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
+- [About the Project](#about-the-project)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## About the Project
+**RONIN-DASHBOARD-L** is a professional administrative dashboard built with **Laravel 9 and PHP 8.2**.
+The project provides a fully-featured admin interface suitable for managing an Ecommerce or business backend.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Key features include:
 
-## Learning Laravel
+- Product management (create, edit, delete, filter)
+- Category management (create, edit, delete, filter)
+- File management (upload, download, delete)
+- Customer management, including account status
+- Order management with status updates
+- Search and filter functionality for products, orders, and customers
+- Dashboard statistics and summaries for quick insights
+- Optional features: email notifications, responsive design, and modal-based interactions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project demonstrates **full-stack web development skills**, including backend logic, database integration, templating with Blade, Livewire/AlpineJS (optional) and responsive frontend design.
 
 ## Features
 
@@ -99,17 +73,145 @@ The Laravel 9 Dashboard project implements the following core features:
 - [x] Display previews of uploaded files
 
 ### Notifications
-- [ ] Flash messages
-- [ ] In-app notifications
-- [ ] Email notifications
+- [x] Flash messages
+- [x] In-app notifications
+- [x] Email notifications
 
 ### Permissions & Security
-- [ ] Admin-only sections
-- [ ] User roles & permissions
-- [ ] Middleware for route protection
-- [ ] Audit logs / activity tracking (extra)
+- [x] Admin-only sections
+- [x] User roles & permissions
+- [x] Middleware for route protection
+- [x] Audit logs / activity tracking (extra)
 
 ### UX/UI
-- [ ] Responsive layout
-- [ ] Consistent navigation
-- [ ] Alerts for success/error
+- [x] Responsive layout
+- [x] Consistent navigation
+- [x] Alerts for success/error
+
+## Technologies Used
+This project uses the following technologies and tools:
+
+- **PHP 8.2** – Server-side scripting language powering the application.
+- **Laravel 9** – Framework used for building the MVC architecture, routing, controllers, and Blade templates.
+- **Blade** – Template engine for rendering dynamic HTML views.
+- **Livewire** – Reactive components without writing custom JS
+- **MySQL** – Relational database for storing products, categories, orders, files, customers and users.
+- **Eloquent ORM** – Object-Relational Mapper for database management.
+- **Bootstrap 5** – Frontend framework for responsive and consistent UI design.
+- **HTML5 & CSS3** – Markup and styling of the web pages.
+- **JavaScript (Vanilla / Optional Alpine.js)** – Client-side interactions and dynamic content.
+- **Composer** – Dependency management for PHP packages.
+- **Git & GitHub** – Version control and collaboration.
+
+## Installation
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/username/ronin-dashboard-l.git
+cd ronin-dashboard-l
+```
+2. Install PHP dependencies
+```bash
+composer install
+```
+3. Set up environment variables
+```bash
+cp .env .env.local
+# Edit .env.local with your database credentials
+```
+4. Generate application key
+```bash
+php artisan key:generate
+```
+5. Create and migrate the database
+```bash
+php artisan migrate
+```
+6. (Optional) Seed the database
+```bash
+php artisan db:seed
+```
+7. Install frontend dependencies (if using Vite/Breeze/Jetstream)
+```bash
+npm install
+npm run dev
+```
+8. Start the Laravel development server
+```bash
+php artisan serve
+```
+
+## Usage
+Once the Laravel development server is running, open your browser at: http://127.0.0.1:8000
+
+You can now:
+- Log in with an administrator account
+- View the main dashboard with summary widgets and statistics
+- Manage products: create, edit, delete and filter records
+- Manage categories: create, edit, delete and filter records
+- Manage files: upload, download and delete
+- View and update orders, including changing order status
+- Manage customers and their account statuses
+- Search and filter products, orders and customers
+- Monitor recent activity and system notifications
+
+## Project Structure
+```text
+ronin-dashboard-l/
+├── app/ # Core application code (Controllers, Models, Policies, Services)
+│   ├── Console/
+│   ├── Events/
+│   ├── Exceptions/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   ├── Middleware/
+│   │   └── Requests/
+│   ├── Listeners/
+│   ├── Models/
+│   ├── Notifications/
+│   ├── Policies/
+│   └── Providers/
+├── bootstrap/ # Framework bootstrap and cache
+├── config/ # Application configuration files
+├── database/
+│   ├── factories/ # Model factories for testing
+│   ├── migrations/ # Database migrations
+│   └── seeders/ # Database seeders
+├── lang/
+├── public/ # Public web directory (document root)
+│   └── index.php # Front controller
+├── resources/
+│   ├── css/
+│   ├── js/
+│   └── views/ # Blade templates
+├── routes/ # Route definitions (web.php, api.php)
+├── storage/ # Logs, compiled templates, uploaded files
+├── tests/ # PHPUnit / Feature tests
+├── vendor/ # Composer dependencies
+├── artisan # Laravel CLI
+├── composer.json # PHP dependencies
+└── README.md # Project documentation
+...
+```
+
+## Contributing
+Contributions are welcome! To contribute to this project:
+
+1. Fork the repository.
+2. Create a new branch for your feature or fix:
+```bash
+git checkout -b feature/new-feature
+```
+3. Commit your changes with a descriptive message:
+```bash
+git commit -m "Add new feature"
+```
+4. Push your branch to your fork:
+```bash
+git push origin feature/new-feature
+```
+5. Open a Pull Request on the main repository and describe your changes.
+
+## License
+This project is currently unlicensed. You may view or fork it for demo purposes.
+A proper license (e.g., MIT) may be added in the future.

@@ -17,40 +17,35 @@ class ActivityFactory extends Factory
      */
     public function definition()
     {
-        $type = $this->faker->randomElement(['order', 'user', 'product']);
+        // Added 'category' and 'file' types
+        $type = $this->faker->randomElement(['category', 'customer', 'file', 'order', 'product']);
 
         $productNames = [
-            'Wireless Headphones',
-            'Smartphone X',
-            'Laptop Pro',
-            'Gaming Mouse',
-            'Fitness Tracker',
-            '4K Monitor',
-            'Bluetooth Speaker',
-            'Smartwatch Series 5',
-            'Ergonomic Chair',
-            'Portable Charger'
+            'Wireless Headphones', 'Smartphone X', 'Laptop Pro', 'Gaming Mouse',
+            'Fitness Tracker', '4K Monitor', 'Bluetooth Speaker',
+            'Smartwatch Series 5', 'Ergonomic Chair', 'Portable Charger'
         ];
+
+        $categoryNames = ['Electronics', 'Home & Garden', 'Fashion', 'Sports', 'Health', 'Toys'];
+        $fileExtensions = ['pdf', 'jpg', 'png', 'xlsx', 'zip'];
 
         $description = match($type) {
             'order' => "New order #{$this->faker->numberBetween(1000, 1050)} created",
             'product' => "Product '" . $this->faker->randomElement($productNames) . "' added",
-            'user' => $this->faker->randomElement([
-                "New user " . $this->faker->name() . " registered",
-                "User " . $this->faker->name() . " updated profile",
-                "User " . $this->faker->name() . " changed password",
-                "User " . $this->faker->name() . " deactivated account",
-                "User " . $this->faker->name() . " upgraded subscription"
-            ]),
+            'customer' => "Customer '" . $this->faker->name() . "' registered",
+            'category' => "Category '" . $this->faker->randomElement($categoryNames) . "' updated",
+            'file' => "File 'report_" . $this->faker->word() . "." . $this->faker->randomElement($fileExtensions) . "' uploaded",
+            default => "System activity logged",
         };
 
         return [
             'type' => $type,
             'description' => $description,
-            'user_id' => User::inRandomOrder()->first()?->id,
+            'user_id' => in_array($type, ['category', 'file', 'product'])
+                ? (User::inRandomOrder()->first()?->id ?? User::factory())
+                : null,
             'created_at' => $this->faker->dateTimeBetween('-7 days', 'now'),
             'updated_at' => now(),
         ];
     }
-
 }

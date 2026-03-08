@@ -12,11 +12,6 @@
         </div>
 
         <div>
-            <h2 class="font-medium text-gray-700">Description:</h2>
-            <p class="text-gray-900">{{ $category->description ?? '-' }}</p>
-        </div>
-
-        <div>
             <h2 class="font-medium text-gray-700">Created At:</h2>
             <p class="text-gray-900">{{ $category->created_at->format('Y-m-d H:i') }}</p>
         </div>
@@ -27,13 +22,13 @@
         </div>
     </div>
 
-    <div class="mt-6 flex gap-2">
+    <div class="mt-6 flex flex-col sm:flex-row gap-2">
         <a href="{{ route('admin.categories.index') }}"
-           class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded shadow transition">
+           class="w-full sm:w-auto bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium px-4 py-2 rounded shadow transition text-center">
            Back
         </a>
         <a href="{{ route('admin.categories.edit', $category) }}"
-           class="bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded shadow transition">
+           class="w-full sm:w-auto bg-gray-800 hover:bg-gray-900 text-white font-medium px-4 py-2 rounded shadow transition text-center">
            Edit
         </a>
     </div>

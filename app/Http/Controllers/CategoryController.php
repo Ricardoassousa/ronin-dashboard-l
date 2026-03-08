@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -17,6 +19,11 @@ class CategoryController extends Controller
      */
     public function index(Request $request): View
     {
+        Log::info('Accessing category index', [
+            'user_id' => auth()->id(),
+            'filters' => $request->only('name')
+        ]);
+
         $query = Category::query();
 
         // Filter by name
@@ -36,6 +43,10 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
+        Log::info('Accessing category create page', [
+            'user_id' => auth()->id()
+        ]);
+
         return view('admin.categories.create');
     }
 
@@ -47,15 +58,30 @@ class CategoryController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name',
+            ]);
 
-        Category::create($request->only('name', 'description'));
+            $category = Category::create($request->only('name'));
 
-        return redirect()->route('admin.categories.index')
-                         ->with('success', 'Category created successfully.');
+            Log::info('Category created', [
+                'user_id' => auth()->id(),
+                'category_id' => $category->id,
+                'name' => $category->name
+            ]);
+
+            return redirect()->route('admin.categories.index')
+                             ->with('success', 'Category created successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Category creation failed', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to create category. Please try again.');
+        }
     }
 
     /**
@@ -66,6 +92,11 @@ class CategoryController extends Controller
      */
     public function show(Category $category): View
     {
+        Log::info('Viewing category details', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id
+        ]);
+
         return view('admin.categories.show', compact('category'));
     }
 
@@ -77,6 +108,11 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): View
     {
+        Log::info('Accessing category edit page', [
+            'user_id' => auth()->id(),
+            'category_id' => $category->id
+        ]);
+
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -89,15 +125,34 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            ]);
 
-        $category->update($request->only('name', 'description'));
+            $oldData = $category->only('name');
 
-        return redirect()->route('admin.categories.index')
-                         ->with('success', 'Category updated successfully.');
+            $category->update($request->only('name'));
+
+            Log::info('Category updated', [
+                'user_id' => auth()->id(),
+                'category_id' => $category->id,
+                'old' => $oldData,
+                'new' => $category->only('name')
+            ]);
+
+            return redirect()->route('admin.categories.index')
+                             ->with('success', 'Category updated successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Category update failed', [
+                'user_id' => auth()->id(),
+                'category_id' => $category->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to update category. Please try again.');
+        }
     }
 
     /**
@@ -108,16 +163,39 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): RedirectResponse
     {
-        // Optional: prevent deletion if category has products
-        if ($category->products()->count()) {
+        try {
+            if ($category->products()->count()) {
+                Log::warning('Attempted to delete category with products', [
+                    'user_id' => auth()->id(),
+                    'category_id' => $category->id
+                ]);
+
+                return redirect()->route('admin.categories.index')
+                                 ->with('error', 'Cannot delete category with products.');
+            }
+
+            $categoryId = $category->id;
+            $categoryName = $category->name;
+
+            $category->delete();
+
+            Log::info('Category deleted', [
+                'user_id' => auth()->id(),
+                'category_id' => $categoryId,
+                'name' => $categoryName
+            ]);
+
             return redirect()->route('admin.categories.index')
-                             ->with('error', 'Cannot delete category with products.');
+                             ->with('success', 'Category deleted successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Category deletion failed', [
+                'user_id' => auth()->id(),
+                'category_id' => $category->id ?? null,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to delete category. Please try again.');
         }
-
-        $category->delete();
-
-        return redirect()->route('admin.categories.index')
-                         ->with('success', 'Category deleted successfully.');
     }
-
 }

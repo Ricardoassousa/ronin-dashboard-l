@@ -4,7 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use App\Models\Activity;
-use App\Models\User;
+use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -51,9 +52,9 @@ class DashboardStats extends Component
     public function loadData(): void
     {
         $this->stats = [
-            'users' => User::count(),
-            'activities' => Activity::count(),
-            'orders' => Activity::where('type', 'order')->count()
+            'customers'  => Customer::count(),
+            'orders' => Order::where('status', '!=', 'cancelled')->count(),
+            'revenue' => Order::where('status', '!=', 'cancelled')->sum('total_amount'),
         ];
 
         $this->recentActivities = Activity::with('user')
@@ -61,13 +62,20 @@ class DashboardStats extends Component
             ->take(10)
             ->get();
 
-        $this->ordersPerDay = Activity::where('type', 'order')
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-            ->where('created_at', '>=', now()->subDays(7))
+        // Fetch orders per day from the 'orders' table
+        $rawOrders = Order::selectRaw('DATE(created_at) as date, COUNT(*) as total')
+            ->where('created_at', '>=', now()->subDays(6)) // Last 7 days including today
+            ->where('status', '!=', 'cancelled') // Optional: only count valid orders
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('total', 'date')
             ->toArray();
+
+        $this->ordersPerDay = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $this->ordersPerDay[$date] = $rawOrders[$date] ?? 0;
+        }
 
         Log::info('Dashboard Livewire refreshed for user ID: ' . auth()->id());
 

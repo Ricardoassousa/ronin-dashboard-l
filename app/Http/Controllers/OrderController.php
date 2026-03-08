@@ -3,49 +3,93 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of orders.
      *
+     * @param Request $request
      * @return View
      */
     public function index(Request $request): View
     {
-        $query = Order::with('customer');
+        try {
+            Log::info('Accessing order index', [
+                'user_id' => auth()->id(),
+                'filters' => [
+                    'customer' => $request->customer,
+                    'status' => $request->status,
+                ]
+            ]);
 
-        // Filter by customer name
-        if ($request->filled('customer')) {
-            $query->whereHas('customer', function ($q) use ($request) {
-                $q->where('first_name', 'like', '%' . $request->customer . '%');
-            });
+            $query = Order::with('customer');
+
+            // Filter by customer name (First Name or Last Name)
+            if ($request->filled('customer')) {
+                $searchTerm = $request->customer;
+
+                $query->whereHas('customer', function ($q) use ($searchTerm) {
+                    $q->where(function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('first_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('last_name', 'like', '%' . $searchTerm . '%')
+                        // Optional: Search for the full name combined (MySQL specific)
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $searchTerm . '%']);
+                    });
+                });
+            }
+
+            // Filter by status
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $orders = $query->latest()->paginate(10)->withQueryString();
+
+            return view('admin.orders.index', compact('orders'));
+
+        } catch (Exception $e) {
+            Log::error('Error accessing order index', [
+                'user_id' => auth()->id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'There was a problem retrieving the orders.');
         }
-
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $orders = $query->latest()->paginate(10)->withQueryString();
-
-        return view('admin.orders.index', compact('orders'));
     }
 
     /**
      * Display the specified order with related items.
      *
      * @param Order $order
-     * @return View
+     * @return View|RedirectResponse
      */
-    public function show(Order $order): View
+    public function show(Order $order)
     {
-        $order->load('orderItems.product', 'customer');
+        try {
+            Log::info('Viewing order details', [
+                'user_id' => auth()->id(),
+                'order_id' => $order->id
+            ]);
 
-        return view('admin.orders.show', compact('order'));
+            $order->load('orderItems.product', 'customer');
+
+            return view('admin.orders.show', compact('order'));
+
+        } catch (Exception $e) {
+            Log::error('Error viewing order details', [
+                'user_id' => auth()->id(),
+                'order_id' => $order->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Unable to load order details.');
+        }
     }
 
     /**
@@ -57,15 +101,34 @@ class OrderController extends Controller
      */
     public function updateStatus(Request $request, Order $order): RedirectResponse
     {
-        $data = $request->validate([
-            'status' => 'required|in:pending,paid,shipped,cancelled',
-        ]);
+        try {
+            $data = $request->validate([
+                'status' => 'required|in:pending,paid,shipped,cancelled',
+            ]);
 
-        $order->update([
-            'status' => $data['status'],
-        ]);
+            $oldStatus = $order->status;
 
-        return back()->with('success', 'Order status updated successfully.');
+            $order->update(['status' => $data['status']]);
+
+            activity('order-status')
+                ->performedOn($order)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'old_status' => $oldStatus,
+                    'new_status' => $data['status'],
+                ])
+                ->log('Order status changed');
+
+            return back()->with('success', 'Order status updated successfully.');
+
+        } catch (Exception $e) {
+            Log::error('Error updating order status', [
+                'user_id' => auth()->id(),
+                'order_id' => $order->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Unable to update order status.');
+        }
     }
-
 }

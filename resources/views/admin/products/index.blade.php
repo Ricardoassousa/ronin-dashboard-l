@@ -18,7 +18,6 @@
             {{ session('success') }}
         </div>
     @endif
-
     @if(session('error'))
         <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
             {{ session('error') }}
@@ -56,11 +55,17 @@
                     <td class="p-2 flex gap-2">
                         <a href="{{ route('admin.products.show', $product) }}" class="text-blue-600 px-2 py-1 border rounded">View</a>
                         <a href="{{ route('admin.products.edit', $product) }}" class="text-yellow-600 px-2 py-1 border rounded">Edit</a>
-                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST">
+
+                        <!-- Hidden Delete Form -->
+                        <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product) }}" method="POST" style="display:none;">
                             @csrf
                             @method('DELETE')
-                            <button class="text-red-600 px-2 py-1 border rounded" onclick="return confirm('Delete product?')">Delete</button>
                         </form>
+
+                        <button type="button" class="text-red-600 px-2 py-1 border rounded"
+                                onclick="openDeleteModal({{ $product->id }}, '{{ $product->name }}')">
+                            Delete
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -77,11 +82,17 @@
                 <div class="flex gap-3 mt-2">
                     <a href="{{ route('admin.products.show', $product) }}" class="text-blue-600 material-icons" title="View">visibility</a>
                     <a href="{{ route('admin.products.edit', $product) }}" class="text-yellow-600 material-icons" title="Edit">edit</a>
-                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST">
+
+                    <!-- Hidden Delete Form -->
+                    <form id="delete-form-{{ $product->id }}" action="{{ route('admin.products.destroy', $product) }}" method="POST" style="display:none;">
                         @csrf
                         @method('DELETE')
-                        <button class="text-red-600 material-icons" title="Delete" onclick="return confirm('Delete product?')">delete</button>
                     </form>
+
+                    <button type="button" class="text-red-600 material-icons" title="Delete"
+                            onclick="openDeleteModal({{ $product->id }}, '{{ $product->name }}')">
+                        delete
+                    </button>
                 </div>
             </div>
             @endforeach
@@ -94,5 +105,48 @@
         {{ $products->links() }}
     </div>
 
+    <!-- Include Delete Modal Partial -->
+    @include('admin.partials.delete-modal', ['entityName' => 'Product'])
+
 </div>
+
+<!-- JavaScript: Delete Modal -->
+<script>
+let deleteFormId = null;
+
+function openDeleteModal(productId, productName) {
+    deleteFormId = 'delete-form-' + productId;
+    const modal = document.getElementById('deleteModal');
+
+    // Show modal
+    modal.classList.remove('hidden');
+
+    // Set product name in modal
+    document.getElementById('deleteEntityName').innerText = productName;
+
+    // Cancel button closes modal
+    document.getElementById('cancelDelete').onclick = () => modal.classList.add('hidden');
+
+    // Confirm button submits form
+    document.getElementById('confirmDelete').onclick = () => {
+        if(deleteFormId) document.getElementById(deleteFormId).submit();
+    };
+}
+
+// Optional: close modal on outside click or ESC key
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('deleteModal');
+    if(modal && !modal.classList.contains('hidden') && e.target === modal){
+        modal.classList.add('hidden');
+    }
+});
+window.addEventListener('keydown', (e) => {
+    if(e.key === "Escape"){
+        const modal = document.getElementById('deleteModal');
+        if(modal && !modal.classList.contains('hidden')){
+            modal.classList.add('hidden');
+        }
+    }
+});
+</script>
 @endsection

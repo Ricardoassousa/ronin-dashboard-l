@@ -18,7 +18,6 @@
             {{ session('success') }}
         </div>
     @endif
-
     @if(session('error'))
         <div class="mb-4 p-3 bg-red-100 text-red-800 rounded shadow">
             {{ session('error') }}
@@ -65,14 +64,18 @@
                                class="text-blue-600 hover:underline px-2 py-1 border rounded">
                                Download
                             </a>
-                            <form action="{{ route('admin.files.destroy', $file) }}" method="POST">
+
+                            <!-- Hidden delete form -->
+                            <form id="delete-form-{{ $file->id }}" action="{{ route('admin.files.destroy', $file) }}" method="POST" style="display:none;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-red-600 hover:underline px-2 py-1 border rounded"
-                                        onclick="return confirm('Delete file?')">
-                                    Delete
-                                </button>
                             </form>
+
+                            <button class="text-red-600 hover:underline px-2 py-1 border rounded"
+                                    type="button"
+                                    onclick="openDeleteModal({{ $file->id }}, '{{ $file->filename }}')">
+                                Delete
+                            </button>
                         </div>
 
                         <!-- Mobile icons (small/medium screens) -->
@@ -81,14 +84,19 @@
                                class="text-blue-600 material-icons" title="Download">
                                download
                             </a>
-                            <form action="{{ route('admin.files.destroy', $file) }}" method="POST">
+
+                            <!-- Hidden delete form -->
+                            <form id="delete-form-{{ $file->id }}" action="{{ route('admin.files.destroy', $file) }}" method="POST" style="display:none;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-red-600 material-icons" title="Delete"
-                                        onclick="return confirm('Delete file?')">
-                                    delete
-                                </button>
                             </form>
+
+                            <button class="text-red-600 material-icons"
+                                    type="button"
+                                    title="Delete"
+                                    onclick="openDeleteModal({{ $file->id }}, '{{ $file->filename }}')">
+                                delete
+                            </button>
                         </div>
                     </td>
 
@@ -109,5 +117,48 @@
         {{ $files->links() }}
     </div>
 
+    <!-- Include Delete Modal Partial -->
+    @include('admin.partials.delete-modal', ['entityName' => 'File'])
+
 </div>
+
+<!-- JavaScript: Delete Modal -->
+<script>
+let deleteFormId = null;
+
+function openDeleteModal(fileId, fileName) {
+    deleteFormId = 'delete-form-' + fileId;
+    const modal = document.getElementById('deleteModal');
+
+    // Show modal
+    modal.classList.remove('hidden');
+
+    // Set file name in modal
+    document.getElementById('deleteEntityName').innerText = fileName;
+
+    // Cancel button closes modal
+    document.getElementById('cancelDelete').onclick = () => modal.classList.add('hidden');
+
+    // Confirm button submits form
+    document.getElementById('confirmDelete').onclick = () => {
+        if(deleteFormId) document.getElementById(deleteFormId).submit();
+    };
+}
+
+// Optional: close modal on outside click or ESC key
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('deleteModal');
+    if(modal && !modal.classList.contains('hidden') && e.target === modal){
+        modal.classList.add('hidden');
+    }
+});
+window.addEventListener('keydown', (e) => {
+    if(e.key === "Escape"){
+        const modal = document.getElementById('deleteModal');
+        if(modal && !modal.classList.contains('hidden')){
+            modal.classList.add('hidden');
+        }
+    }
+});
+</script>
 @endsection

@@ -29,7 +29,7 @@ class OrderItemFactory extends Factory
             'product_id' => Product::factory(),
             'unit_price' => $unitPrice,
             'quantity' => $quantity,
-            'total_price' => $unitPrice * $quantity
+            'total_price' => $unitPrice * $quantity,
         ];
     }
 }

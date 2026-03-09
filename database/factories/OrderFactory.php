@@ -23,11 +23,11 @@ class OrderFactory extends Factory
         return [
             'customer_id' => Customer::factory(),
             'total_amount' => $this->faker->randomFloat(2, 10, 500),
-            'status' => $this->faker->randomElement(['pending', 'completed', 'shipped', 'cancelled']),
+            'status' => $this->faker->randomElement(['pending', 'paid', 'shipped', 'cancelled']),
             'payment_method' => $this->faker->randomElement(['credit_card', 'paypal', 'boleto']),
             'shipping_address' => $this->faker->address(),
             'billing_address' => $this->faker->address(),
-            'placed_at' => $this->faker->dateTimeThisYear()
+            'placed_at' => $this->faker->dateTimeThisYear(),
         ];
     }
 }

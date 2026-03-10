@@ -20,13 +20,17 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
+        $categoryId = $this->category_id 
+            ?? Category::inRandomOrder()->first()?->id 
+            ?? Category::factory();
+
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
             'price' => $this->faker->randomFloat(2, 5, 200),
             'stock' => $this->faker->numberBetween(0, 50),
-            'category_id' => Category::factory(),
-            'is_active' => $this->faker->boolean(90)
+            'category_id' => $categoryId,
+            'is_active' => $this->faker->boolean(90),
         ];
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Activity;
+use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ActivitySeeder extends Seeder
+class ProductSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +15,6 @@ class ActivitySeeder extends Seeder
      */
     public function run()
     {
-        Activity::factory()->count(20)->create();
+        Product::factory()->count(20)->create();
     }
 }

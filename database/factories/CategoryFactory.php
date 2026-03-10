@@ -20,11 +20,11 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
-        $name = $this->faker->word();
+        $name = $this->faker->unique()->word();
 
         return [
-            'name' => ucfirst($name),
-            'slug' => Str::slug($name),
+            'name' => ucfirst($name) . '-' . $this->faker->unique()->numberBetween(1, 10000),
+            'slug' => Str::slug($name) . '-' . $this->faker->unique()->numberBetween(1, 10000),
             'is_active' => $this->faker->boolean(90),
         ];
     }
